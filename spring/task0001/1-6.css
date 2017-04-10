@@ -1,0 +1,159 @@
+/*div 居中的两种方法*/
+#div1 {
+	width: 980px;
+	background-color: red;
+	margin:10px auto;
+	text-align: center;
+}
+#div2 {
+	text-align: center;
+	margin-bottom: 10px;
+}
+#div2-content {
+	width: 980px;
+	background-color: red;
+	display: inline-block;
+}
+
+/*圆角矩形*/
+#div3 {
+    margin-bottom: 10px;
+}
+.b1, .b2, .b3, .b1b, .b2b, .b3b, .b4b {
+	height: 1px;
+}
+.b2, .b3, .b4, .b2b, .b3b, .b4b, .b {
+	border-left: 1px solid #999;
+    border-right: 1px solid #999;
+}
+.b1, .b1b {
+	margin: 0 5px;
+	background: #999;
+}
+.b2, .b2b {
+	margin: 0 3px;
+	border-width: 2px;
+}
+.b3, .b3b {
+	margin: 0 2px;
+}
+.b4, .b4b {
+	margin: 0 1px;
+	height: 2px;
+}
+.d1 {
+	background: #B8DBFF;
+}
+.k {
+	height: 200px;
+}
+
+/*两列布局的两种方法*/
+#div4 {
+	margin-bottom: 10px;
+}
+.div4-a {
+	float: left;
+	width: 50px;
+	height: 50px;
+	background: #f00;
+}
+.div4-b {
+    margin-left: 50px;
+    height: 50px;
+    background: #00f;
+}
+.div4-c {
+	clear: left;
+	width: 100%;
+	height: 50px;
+	background: #ff0;
+}
+
+#div5 {
+	margin-bottom: 10px;
+}
+.div5-ab-wrap {
+	display: -webkit-flex;
+	display: flex;
+}
+.div5-a {
+	width: 50px;
+	height: 50px;
+	background: #f00;
+}
+.div5-b {
+	-webkit-flex: 1;
+	flex: 1;
+	height: 50px;
+	background: #00f;
+}
+.div5-c {
+	width: 100%;
+	height: 50px;
+	background: #ff0;
+}
+
+/*三列布局的两种方法*/
+#div6 {                                /*这种情况下b没有被遮盖*/
+	margin-bottom: 10px;
+}
+.div6-a {
+	width: 50px;
+	height: 50px;
+	float: left;
+	background: #f00;
+}
+.div6-b {
+	margin: 0 50px;
+	height: 50px;
+    background: #00f;
+}
+.div6-c {
+	width: 50px;
+	height: 50px;
+	float: right;
+	background: #ff0;
+}
+
+#div7 {                      /*这种情况下b被遮盖了（可以运用相对定位来调整）*/
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+.div7-a {
+	float: left;
+	width: 50px;
+	height: 50px;
+	margin-left: -100%;
+	background: #f00;
+}
+.div7-b {
+	margin: 0 50px;
+	background-color: #00f;
+	height: 50px;
+}
+.div7-b-wrap {
+	float: left;
+	width: 100%;
+}
+.div7-c {
+	float: left;
+	width: 50px;
+	height: 50px;
+	margin-left: -50px;
+	background: #ff0;
+}
+
+/*浮动布局*/
+#div8 {
+	margin-bottom: 10px;
+	background: #f00;
+	overflow: hidden;/*形成BFC*/
+}
+.floatbox {
+	float: left;
+	width: 100px;
+	height: 50px;
+	margin: 1em;
+	background: #00f;
+}
