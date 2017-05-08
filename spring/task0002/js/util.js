@@ -281,3 +281,50 @@ function getPosition(element) {
         y: y
     }
 }
+
+//task3.2
+//实现一个简单的query
+function $(selector) {                                       //$(selector)表示getElementById("selector")
+	var ele = document;                                      //document是文档对象
+	var sele = selector.replace(/\s+/, ' ').split(' ');      //除去多于的空格并分割
+	for(var i = 0, len = sele.length; i < len; i++) {
+		switch(sele[i][0]) {   //从子节点中查找？每一项的第一个字符？
+			case '#':
+			    ele = ele.getElementById(sele[i].substring(1));
+			    break;
+			case '.':
+			    ele = ele.getElmentByClassName(sele[i].substring(1))[0];
+			    break;
+			case '[':
+			    var valueLoc = sele[i].indexOf('=');
+			    var temp = ele.getElementsByTagName('*');
+			    var tlen = temp.length;
+			    if (valueLoc !== -1) {
+			    	var key = sele[i].substring(1, valueLoc);
+			    	var value = sele[i].substring(valueLoc + 1,sele[i].length - 1);
+			    	for (var j = 0; j < len; j++) {
+			    	    if (temp[j][key] === value) {
+			    		    ele = temp[j];
+			    		    break;
+			    	    }
+			        }
+			    }
+			    else {
+			    	var key = sele[i].substring(1, sele[i].length - 1);
+			    	for(var j = 0; j < len; j++) {
+			    		if (temp[j][key]) {
+			    			ele = temp[j];
+			    		    break;
+			    		}
+			    	}
+			    }
+			    default:
+			        ele = ele.getElementsByTagName(sele[i])[0];
+			        break;
+		}
+	}
+	if (!ele) {
+		ele = null;
+	}
+	return ele;
+}
