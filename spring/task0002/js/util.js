@@ -302,7 +302,7 @@ function $(selector) {                                       //$(selector)表示
 			    if (valueLoc !== -1) {
 			    	var key = sele[i].substring(1, valueLoc);
 			    	var value = sele[i].substring(valueLoc + 1,sele[i].length - 1);
-			    	for (var j = 0; j < len; j++) {
+			    	for (var j = 0; j < tlen; j++) {
 			    	    if (temp[j][key] === value) {
 			    		    ele = temp[j];
 			    		    break;
@@ -328,3 +328,199 @@ function $(selector) {                                       //$(selector)表示
 	}
 	return ele;
 }
+
+// task 4.1
+// 给一个element绑定一个针对event事件的响应，响应函数为listener
+function addEvent(element, event, listener) {
+    element.addEventListener(event, listener);
+}
+
+// 移除element对象对于event事件发生时执行listener的响应
+function removeEvent(element, event, listener) {
+	element.removeEventListener(event, listener);
+}
+
+// 实现对click事件的绑定
+function addClickEvent(element, listener) {
+	addEvent(element, "click", listener);
+}
+
+// 实现对于按Enter键时的事件绑定
+function addEnterEvent(element, listener) {
+	addEvent(element, 'keydown', function(e) {
+		var event = e || event.keyCode;
+		var keyCode = event.which || event.keyCode;
+		if (keyCode === 13) {
+			listener.call(element, event);
+		}
+	});
+}
+
+// 接下来我们把上面几个函数和$做一下结合，把他们变成$对象的一些方法
+$.on = addEvent;
+$.un = removeEvent;
+$.click = addClickEvent;
+$.enter = addEnterEvent;
+
+// task 4.2
+// 对一个列表里所有的<li>增加点击事件的监听
+function clickListener(event) {
+	console.log(event);
+}
+
+// 我们通过自己写的函数，取到id为list这个ul里面的所有li，然后通过遍历给他们绑定事件。这样我们就不需要一个一个去绑定了。
+function clickListener(event) {
+	console.log(event);
+}
+
+function renderList() {
+	$("#list").innerHTML = '<li>new item</li>';
+}
+
+function init() {
+    /*
+    each($("#list").getElementsByTagName("li"),function(item) {
+	    $.click(item, clickListener);
+    })
+    */
+	$.click($("#btn"),renderList);
+}
+
+// 我们增加了一个按钮，当点击按钮时，改变list里面的项目，这个时候你再点击一下li，绑定事件不再生效了。
+// 那是不是我们每次改变了DOM结构或者内容后，都需要重新绑定事件呢？当然不会这么笨，接下来学习一下事件代理，然后实现下面新的方法。
+function delegateEvent(element, tag, eventName, listener) {
+	addEvent(element, eventName, function(e) {
+		var event = e || window.event;
+		var tag = event.target || event.srcElement;
+
+		if (target && target.tagName === tag.toUpperCase()) {
+			listener.call(target, event);
+		}
+	});
+}
+
+$.delegate = delegateEvent;
+
+// 使用示例
+// 还是上面那段HTML，实现对list这个ul里面所有li的click事件进行响应
+/*
+$.delegate($("#list"), "li", "click", clickListener);
+*/
+
+//task 5.1
+// 判断是否为IE浏览器，返回-1或者版本号
+function isIE() {
+	return /msie (\d+\.\d+)/i.test(navigator.userAgent)
+	? (document.documentMode || + RegExp['\x241']) : -1;
+}
+
+// 设置cookie
+function isValidCookieName(cookieName) {
+	return (new RegExp('^[^\\x00-\\x20\\x7f\\(\\)<>@,;:\\\\\\\"\\[\\]\\?=\\{\\}\/\\u0080-\\uffff]+\x24'))
+	    .test(cookieName);
+}
+
+function setCookie(cookieName, cookieValue, expiredays) {
+	if (!isValidCookieName(cookieName)) {
+		return;
+	}
+
+	var exdate = "";
+	if (expiredays) {
+		exdate = new Date();
+		exdate.setTime(exdate.getDate() + expiredays);
+		var expires = ";expires=" + exdate.toUTCString();
+	}
+	document.cookie = cookieName + '=' + encodeURIComponent(cookieValue) + expires;
+}
+
+//获取Cookie值
+function getCookie(cookieName) {
+	if (!isValidCookieName) {
+		return null;
+	}
+
+	var re = new RegExp(cookieName + "=(.*?)($|;)");
+	return re.exec(document.cookie)[1] || null;
+}
+
+// task 6.1
+// 学习Ajax，并尝试自己封装一个Ajax方法。
+function ajax(url, options) {
+	//创建对象
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		xmlhttp = new XMLHttpRequest();
+	}
+	else {
+        xmlhttp = new ActiveXObjext("Microsoft.XMLHTTP");
+	}
+
+	//处理data
+	if (options.data) {
+		var dataarr = [];
+		for(var item in options.data) {
+			dataarr.push(item + '=' + encodeURI(options.data[item]));
+		}
+		var data = dataarr.join('&')
+	}
+
+	//处理type
+	if (!options.type) {
+		options.type = "GET";
+	}
+	options.type = options.type.toUpperCase();
+
+	//发送请求
+	if (options.type ==="GET") {
+		var myURL = "";
+		if (options.data) {
+			myURL = url + '?' + data;
+		}
+		else {
+			myURL = url;
+		}
+		xmlhttp.open("get", myURL, true);
+		xmlhttp.send();
+	}
+	else if (options.type === "POST") {
+		xmlhttp.open("POST", url, true);
+		xmlhttp.setRequestHeader("Content-typr", "application/x-www-form-urlencoded");
+		xmlhttp.send(data);
+	}
+
+	//readyState
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState === 4) {
+			if (xmlhttp.status === 200) {
+				if (options.onsuccess) {
+					options.onsuccess(xmlhttp.responseText, xmlhttp.responseXML);
+				}
+			}
+			else {
+				if (options.onfail) {
+					options.onfail();
+				}
+			}
+		}
+	}
+}
+
+
+// 使用示例：
+/*
+ajax(
+    'prompt.php',
+    {
+        data: {
+            q: 'a'
+        },
+        onsuccess: function (responseText, xhr) {
+            console.log(responseText);
+        },
+        onfail : function () {
+            console.log('fail');
+        }
+    }
+);
+*/
