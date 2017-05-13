@@ -65,7 +65,7 @@ header {
 	}
 }
 
-/*common center*/
+/*task0002_1*/
 .center {
 	margin: 0 auto;
 	width: 980px;
@@ -126,4 +126,19 @@ header {
 .deal button:active {
 	position: relative;
 	top: 1px;
+}
+
+.error {
+    position: absolute;   /*因为完全从文档中摘除，所以最初的位置是在button元素的上方（覆盖）*/
+    left: 300px;
+    line-height: 28px;
+    color: #f00;
+}
+
+.result h3 {
+	margin-bottom: 10px;
+}
+
+.result {
+	word-spacing: 10px;
 }
