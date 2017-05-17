@@ -1,8 +1,7 @@
 function showHobby() {
 	var text = $(".myTextArea").value;
 	text = text.replace(/[\s,，、;；]+/g, ' ');
-	text = text.replace(/^\s/g, '');
-	text = text.replace(/\s$/g, '');
+	text = trim(text);
 	var hobby = text.split(' ');
 	hobby = uniqArray(hobby);
 
@@ -19,9 +18,9 @@ function showHobby() {
 		}
 
 		/*if (isIE()) {
-			document.body.innerHTML("<div class="result"><h3>爱好</h3></div>");
+			document.body.innerHTML = "<div class="result"><h3>爱好</h3></div>";
 			for(var i = 0, len = hobby.length; i < len; i++) {
-				$(.result).innerHTML("<input type='checkbox'>" + hobby[i]);
+				$(.result).innerHTML = "<input type='checkbox'>" + hobby[i];
 			}
 		}*/
 

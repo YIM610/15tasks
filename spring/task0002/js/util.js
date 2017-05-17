@@ -236,7 +236,7 @@ function isMobilePhone(phone) {
 //element是否有这个类
 function hasClass(element, className) {
 	var name = element.className.match(/\S+/g) || [];
-	if (name.indexof(className) !== -1) {   //返回classname在name中第一次出现的索引
+	if (name.indexOf(className) !== -1) {   //返回classname在name中第一次出现的索引
 		return true;
 	}
 	return false;
