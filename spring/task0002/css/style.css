@@ -252,3 +252,36 @@ header {
 .choose {
     background: #eee;
 }
+
+/*task0002_5*/
+.drag-container {
+	margin-top: 20px;
+}
+
+.drag-wrap {
+	width: 150px;
+	height: 450px;
+	background: #ccc;
+	margin-right: 160px;
+	float: left;
+	border: 1px solid #333;
+	position: relative;
+}
+
+.drag {
+	width: 150px;
+	height: 40px;
+	background: #666;
+	border: 1px solid #333;
+	margin: -1px;
+	color: #fff;
+	line-height: 40px;
+	text-align: center;
+	cursor: move;
+	position: absolute;
+	left: 0;                      /*没有js的情况下会重叠起来*/
+}
+
+.dragging {
+	visibility: hidden;
+}
