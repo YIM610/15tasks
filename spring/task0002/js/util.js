@@ -4,6 +4,8 @@ function isArray(arr) {
 	return Object.prototype.toString.call(arr) === '[object Array]';
 }
 
+//判断fu是否为一个函数，返回一个布尔值
+
 function isFunction(fu) {
 	return Object.prototype.toString.call(fn) === '[object Function]';
 }
@@ -28,7 +30,7 @@ function cloneObject(src) {
 	}
 
 	if (src instanceof Object) {
-		clone = {};       //如果只留花括号，则定义只包含默认属性和方法的对象
+		clone = {};                        //如果只留花括号，则定义只包含默认属性和方法的对象
 		for(var key in src) {
 			if (src.hasOwnProperty(key)) {
 				clone[key] = cloneObject(src[key]);

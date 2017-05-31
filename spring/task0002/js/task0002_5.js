@@ -24,8 +24,8 @@ function getLocation(event) {
 	var location = [];        // location的第一个元素代表容器的序号，第二个元素代表滑块在容器中的序号
 	var moveX = event.clientX - startX;
 	var moveY = event.clientY - startY;
-	var y = startTop + moveY;
 	var x = startLeft + moveX;
+    var y = startTop + moveY;
 
 	if (x < 230) {
 		location[0] = 0;
@@ -37,7 +37,7 @@ function getLocation(event) {
 		location[0] = 2;
 	}
 
-	location[1] = Math.floor((y + 20) / 40);
+	location[1] = Math.floor((y + 20) / 40);      //(y+marginRight)/height
 	var dragNum = wrap[location[0]].getElementsByClassName("drag").length;
 	location[1] = Math.max(location[1], 0);
 	location[1] = Math.min(location[1], dragNum);
