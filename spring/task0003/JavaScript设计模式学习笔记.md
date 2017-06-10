@@ -38,6 +38,8 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
 
 工厂就是把成员对象的创建工作转交给一个外部对象，好处在于消除对象之间的耦合。通过使用工厂方法而不是new关键字及具体类，可以把所有实例化的代码都集中在一个位置，有助于创建模块化的代码，这是工厂模式的目的和优势。
 
+实际上在js里面，所谓的构造函数也是一个简单工厂。只是批了一件new的衣服。
+
 比如有一个大功能要做，其中有一部分是要考虑扩展性的，那么这部分代码就可以考虑抽象出来，当做一个全新的对象处理。好处就是将来扩展的时候容易维护，只需要操作这个对象的内部方法和属性，达到了动态实现的目的。
 
     var XMLHttpFactory = function() {};
@@ -92,9 +94,41 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
 
 观察者模式是最常用的模式之一，在很多语言里都得到大量应用，包括我们平时接触的dom事件，也是js和dom之间实现的一种观察者模式。
 
+    div.onclick = function click() {
+        alert("click");
+    }
+
+只要订阅了div的click事件，当点击div的时候，function click就会被触发。
+
 好莱坞有句名言. “不要给我打电话， 我会给你打电话”. 这句话就解释了一个观察者模式的来龙去脉。 其中“我”是发布者， “你”是订阅者。
 
 观察者模式可以很好的实现2个模块之间的解耦。
+
+    loadImage(imgAry, function(){
+    Map.init();
+    Gamer.init();
+    Sount.init();
+    })
+
+改进后：
+
+    loadImage.listen("ready", function(){
+        map.init();
+    })
+
+    loadImage.listen("ready", function(){
+        Gamer.init();
+    })
+
+    loadImage.listen("ready", function(){
+        Sount.init();
+    })
+
+loadImage完成之后，它根本不会关心将来发生什么。它现在只要发布一个信号：
+
+    loadImage.trigger("ready");
+
+那么监听它的ready事件的对象都会收到通知。
 
 ## 桥接模式
 
@@ -102,19 +136,34 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
 
 桥梁模式可以用来弱化它与使用它的类和对象之间的耦合，就是将抽象与其实现隔离开来，以便二者独立变化。这种模式对于js中常见的时间驱动的编程有很大益处，桥梁模式最常见和实际的应用场合之一是时间监听器回调函数。
 
-不好的示例：
-
-    element.onclick = function() {
-        new setLogFunc();
+    var singleton = function( fn ){
+        var result;
+        return function(){
+            return result || ( result = fn .apply( this, arguments ) );
+        }
     }
+ 
+    var createMask = singleton( function(){
+ 
+    return document.body.appendChild( document.createElement('div') );
+ 
+    })
 
-这段代码中无法看出LogFun方法要显示在什么地方以及有什么可配置的选项以及应该怎样去修改它。桥梁模式就是要解决这个问题，让接口可配置。把页面中的一个个功能都想象成模块，接口可以使得模块之间的耦合降低。
+singleton是抽象部分，而createMask是实现部分。他们完全可以独立变化互不影响。如果需要写一个createScript就一点都不费力：
 
-桥梁模式目的就是让API更加健壮，提高组件的模块化程度，促成更简洁的实现，并提高抽象的灵活性：
+    var creatrScript = singleton(fuction(){
+        return document.body.appendChild(document.createElement("script"));
+    })
 
-    element.onclick = function() {
-        //API可控制性提高了，使得这个API更加健壮
-        new someFunction(element, param, callback);
+另外一个常见的例子就是forEach函数的实现，用来迭代一个数组：
+
+    forEach = function(arr, fn) {
+        for(var i = 0, l = arr.length; i < l; i++) {
+            var c = arr[i];
+            if(fn.call(c, i, c) === false) {  //是为了按任何顺序输入c,i都能被识别
+                return false;
+            }
+        }
     }
 
 **桥梁模式还可以用于连接公开的API代码和私有的实现代码，还可以把多个类连接在一起。**
@@ -147,6 +196,10 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
     theString = new myText.Decorations.makeItalic (theString);  
     alert(theString.show());      //output '<li>this is a sample test String</li>'
 
+## 代理模式
+
+代理模式的定义是把对一个对象的访问，交给另外一个代理对象来操作。 
+
 ## 组合模式
 
 组合模式是一种专为创建web上的动态用户界面而量身定做的模式。使用这种模式，可以用一条命令在多个对象上激发复杂的或递归的行为。组合模式擅长于对大批对象进行操作。
@@ -165,7 +218,7 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
 
 ## 门面模式
 
-门面模式是几乎所有js库的核心原则。子系统中的一组接口提供一个一致的界面，门面模式定义了一个高层接口，这个接口使得这一子系统更加容易使用，它可以用来修改类和对象的接口，使其更便于使用。
+门面模式是几乎所有js库的核心原则。门面模式定义了一个高层接口，这个接口使得这一子系统更加容易使用。
 
 门面模式的两个作用：
 
@@ -183,6 +236,24 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
                 el['on'+type] = fn;  
             }  
         }
+
+有一个例子：
+
+    var getName = function(){
+        return ''svenzeng"
+    }
+    var getSex = function(){
+       return 'man'
+    }
+
+如果我们需要一起调用getName和getSex函数，那可以用一个更高层的接口getUserinfo来调用：
+
+    var getUserInfo = function() {
+        var info = a() + b();
+        return info;
+    }
+
+门面模式还有一个好处是可以对用户隐藏真正的实现细节，用户只关心最高层的接口。比如在烧鸭饭套餐中，你并不关心师傅是先做烤鸭还是先炒白菜，也不关心那只鸭子是在哪里成长的。
 
 ## 适配器模式
 
@@ -221,4 +292,130 @@ js设计模式的作用——提高代码的重用性，可读性，使代码更
 1. 合理划分内部和外部数据。既要保持每个对象的模块性、保证享元的独立、可维护，又要尽可能多的抽离外部数据。
 2. 管理所有实例既然抽离出了外部数据和操作，那享元就必须可以访问和控制实例对象。在JavaScript这种动态语言中，这个需求是很容易实现的：我们可以把工厂生产出的对象简单的扔在一个数组中。为每个对象设计暴露给外部的方法，便于享元的控制。
 
-    
+## 访问者模式
+
+那么通俗点讲，访问者模式先把一些可复用的行为抽象到一个函数(对象)里，这个函数我们就称为访问者（Visitor）。如果另外一些对象要调用这个函数，只需要把那些对象当作参数传给这个函数，在js里我们经常通过call或者apply的方式传递this对象给一个Visitor函数.
+
+例子中，我们利用访问者模式，给object对象增加push方法：
+
+    var Visitor = {};
+    Visitor.push = function() {
+        return Array.prototype.push.apply(this, arguments);
+    }
+
+    var obj = {};
+    obj.push = Visitor.push;
+    obj.push("first");
+    alert(obj[0]);       //"first"
+    alert(obj.length);   //1
+
+## 策略模式
+
+策略模式就是定义一系列的算法，把他们一个个封装起来，并且使它们可以相互替换。
+
+想象我们现在有一个表单文本框，需要验证非空，敏感词，字符过长这几种情况。当然是可以写3个if else来解决，但是这样写代码的扩展性和维护性可想而知。如果表单里面的元素再多一点，需要校验的情况多一点，加起来写上百个if else也不是没有可能。
+
+所以更好的做法是把每种验证规则都用策略模式单独的封装起来。需要哪种验证的时候只需要提供这个策略的名字：
+
+    nameInput.addValidata({
+        notNull: true,
+        dirtyWords: true,
+        maxLength: 30
+    })
+
+    而notNull，maxLength等方法只需要统一的返回true或者false，来表示是否通过了验证。
+    validataList = {
+        notNull: function( value ){
+        return value !== '';
+        },
+        maxLength: function( value, maxLen ){
+            return value.length() > maxLen;
+        }
+   }
+
+##模板方法模式
+
+模板方法是预先定义一组算法，先把算法的不变部分抽象到父类，再将另外一些可变的步骤延迟到子类去实现。
+
+一个很常见的场景是在一个公司的项目中，经常由架构师搭好架构，声明出抽象方法。下面的程序员再分头重写这些抽象方法。
+
+假如上帝创造生命时用到了模板方法模式：
+
+    var Life = function() {};
+    Life.prototype.init = function() {
+        this.DNA复制();
+        this.出生();
+        this.成长();
+        this.衰老();
+        this.死亡();
+    }
+    this.prototype.DNA复制 = function() {
+        //code
+    };
+    this.prototype.出生 = function() {};
+    //...
+
+其中DNA复制是预先定义的算法中的不变部分，所有子类都不能改写它。而其他方法在父类中会被先定义成一个空函数，然后被子类重写，这就是模板方法中所谓的可变的步骤。
+
+    var Mammal = function() {};
+    Mammal.prototype = Life.prototype;
+    Mammal.prototype.出生 = function() {
+        //code
+    }
+
+## 中介者模式
+
+中介者对象可以让各个对象之间不需要显示的相互作用，从而使其耦合松散，而且可以独立地改变它们之间的交互。
+
+![](http://jbcdn2.b0.upaiyun.com/2012/10/image-4.png)
+
+![](http://jbcdn2.b0.upaiyun.com/2012/10/image-5.png)
+
+代理模式中A知道B的一切，而中介者模式中A,B,C对E,F,G的实现并不关心，而且中介者模式可以连接任意多种对象。
+
+    var mode1 = Mode.create(),  mode2 = Mode.create();
+    var view1 = View.create(),   view2 = View.create();
+    var controler1 = Controler.create( mode1, view1, function(){
+        view1.el.find( ''div' ).bind( ''click', function(){
+            this.innerHTML = mode1.find( 'data' );
+        })
+    })
+    var controler2 = Controler.create( mode2 view2, function(){
+        view1.el.find( ''div' ).bind( ''click', function(){
+            this.innerHTML = mode2.find( 'data' );
+        })
+    })
+
+## 迭代器模式
+
+迭代器模式提供一种方法顺序访问一个聚合对象中各个元素，而又不需要暴露该方法中的内部表示。
+
+js中我们经常会封装一个each函数实现迭代器
+
+    forEach = function(ary, fn) {  
+        for (var i = 0, l = ary.length; i < l; i++) {    
+            var c = ary[ i ];
+            if (fn.call(c, i, c) === false){      
+                return false;    
+            }   
+        }
+    }
+
+    forEach( [ 1, 2, 3 ], function( i, n ){
+        alert ( i );
+    })
+
+obj的迭代器：
+
+    forEach = function(obj, fn) {
+        for (var i in obj) {    
+            var c = obj[ i ];
+            if (fn.call( c, i, c ) === false) {
+                return false;    
+            }   
+        }
+    }
+
+    forEach( {"a": 1,"b": 2}, function( i, n ){
+        alert ( i );
+    })
