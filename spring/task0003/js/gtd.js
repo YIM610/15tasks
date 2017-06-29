@@ -1,4 +1,5 @@
 //localStorage + JSON 存储任务模式
+//cate代表分类、childCate代表子分类、task代表任务
 var cate;
 var childCate;
 var task;
@@ -81,14 +82,77 @@ function makeType() {
 	for (var i = 0; i < cate.length; i++) {
 		html += '';
 		     + '<li>'
-		     +      '<h3 onclick="typeClick(this)">'
-	         +           '<i class="icon-folder-open-empty"></i><span>'    
-	         +      '</h3>'
-             +      '<ul class="item">';
+		     +     '<h3 onclick="typeClick(this)">'
+	         +         '<i class="icon-folder-open-empty"></i><span>' + cate[i].name + '</span>(' + cate[i].num + ')<i calss="delete icon-minus-circled" onclick="del(event, this)"></i>'
+	         +     '</h3>'
+             +     '<ul class="item">';
         
-        for(var j = 0; j < cate[i].child.length; j++) {
-        	var
+        for (var j = 0; j < cate[i].child.length; j++) {
+        	var childNode = getObjByKey(childCate, 'id', cate[i].child[j]);
+        	html += ''
+        	     +      '<li>'
+        	     +          '<h4 onclick="typeClick(this)">'
+        	     +              '<i class="icon-doc-text"></i><span>' + childNode.name + '</span>(' + childNode.child.length + ')<i calss="delete icon-minus-circled" onclick="del(event, this)"></i>'
+        	     +          '</h4>'
+        	     +      '</li>'
         }
+        html += ''
+             +      '</ul>'
+             +  '<li>'
+    }
+    html = html.replace(/<i class="delete icon-minus-circled" onclick="del\(event, this\)"><\/i>/, '');  //去掉默认分类的删除按钮
+    html = html.replace(/<i class="delete icon-minus-circled" onclick="del\(event, this\)"><\/i>/, '');  //去掉默认子分类的删除按钮
+    $('.item-wrap').innerHTML = html;
+
+    if (oldChoose) {               //恢复之前选中的选项
+    	var tag = oldChoose.tagName.toLowerCase();
+    	var name = oldChoose.getElementsByTagName('span')[0].innerHTML;
+    	var isClick = false;
+    	switch (tag) {
+    		case 'h2':
+    		    $('h2').click();
+    		    isClick = true;
+    		    break;
+    		case 'h3':
+    		    var cateELe = document.getElementsByTagName('h3');
+    		    for(var i = 0; i < cateEle.length; i++) {
+    		    	if (cateEle[i].getElementsByTagName('span[0]').innerHTML === name) {
+    		    		cateEle[i].click();
+    		    		isClick = true;
+    		    		break;
+    		    	}
+    		    }
+    		case 'h4':
+    		    var childEle = document.getElementsByTagName('h4');
+    		    for (var i = 0; i < childELe.length; i++) {
+    		    	if (childELe[i].getElementsByTagName('span[0]').innerHTML === name) {
+    		    		childELe[i].click();
+    		    		isClick = true;
+    		    		break;
+    		    	}
+    		    }
+    		    break;
+    	}
+    	if (!isClick) {
+    		$('h2').click();
+    	}
+    }
+    else {
+    	$('h2').click();
     }
 
+    makeTask();
+}
+
+//生成任务列表
+function makeTask() {
+	var oldChoose = $('.task-wrap .choose');
+	$('.status li').click();
+	var ele = $('.type-wrap .choose');
+	var eleTag = ele.tagName.toLowerCase();
+	var name = ele.getElementsByTagName('span')[0].innerHTML; 
+	var taskIdArr = [];
+	switch (eleTag) {
+		
+	}
 }
